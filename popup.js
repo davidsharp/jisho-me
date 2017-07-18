@@ -2,8 +2,8 @@
 // chrome.commands.onCommand.addListener(function(command) {});
 // https://developer.chrome.com/extensions/omnibox
 // chrome.omnibox.onInputStarted.addListener(function callback)
-chrome.omnibox.onInputChanged.addListener(function(e){console.log(e)})
-// chrome.omnibox.onInputEntered.addListener(function callback)
+// chrome.omnibox.onInputChanged.addListener(function(e){console.log(e)})
+chrome.omnibox.onInputEntered.addListener(jishoMe)
 
 // http://jisho.org/forum/54fefc1f6e73340b1f160000-is-there-any-kind-of-search-api
 // https://app.kanjialive.com/api/docs
@@ -22,37 +22,19 @@ chrome.commands.onCommand.addListener(function(command){
   console.log('Trigger Command :::',command)
   if(text.length>0 && command === 'jisho-me'){
     console.log('TODO: jisho-me!')
-    fetch(Jisho+encodeURIComponent(text)).then(function(response) {
-      response.json().then(function(o){o.data.forEach(c=>{if(true||c.is_common){
-        console.log(  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
-        console.log(  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
-        console.log(  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
-        console.log(  '~~~~~~~~~~~~~~~' )
-      }})})
-    })
+    jishoMe(text);
   }
 
 });
 
-/*
-const cmdr = require('commander'),
-      request = require('request')
 
-cmdr
-  .option('-t, --text [value]')
-  .option('-c, --common')
-  .parse(process.argv);
-
-
-  request(Jisho+encodeURIComponent(cmdr.text), function (error, response, html) {
-    if (!error && response.statusCode == 200) {
-      let data = (JSON.parse(response.body).data)
-      data.forEach(c=>{if(!cmdr.common||c.is_common){
-        console.log(  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
-        console.log(  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
-        console.log(  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
-        console.log(  '~~~~~~~~~~~~~~~' )
-      }})
-    }
-  });
- */
+function jishoMe(text){
+  fetch(Jisho+encodeURIComponent(text)).then(function(response) {
+    response.json().then(function(o){o.data.forEach(c=>{if(true||c.is_common){
+      console.log(  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
+      console.log(  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
+      console.log(  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
+      console.log(  '~~~~~~~~~~~~~~~' )
+    }})})
+  })
+}
