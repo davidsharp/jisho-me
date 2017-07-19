@@ -1,7 +1,15 @@
-var selection=''
- document.onselectionchange=function(e){
-   //console.log(window.getSelection(),window.getSelection().toString())
-   if(window.getSelection().toString()!==selection)chrome.extension.sendMessage(window.getSelection().toString(), function(response) {
-      //callback
-   });
+var selection = ''
+var time = undefined
+var throttle = 300
+
+ document.onselectionchange=function(){
+   if(time)clearTimeout(time)
+   time=setTimeout(messageExtension,throttle)
  }
+
+
+function messageExtension(){
+  if(window.getSelection().toString()!==selection)chrome.extension.sendMessage(window.getSelection().toString(), function(response) {
+     //callback
+  });
+}

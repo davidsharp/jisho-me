@@ -31,6 +31,7 @@ chrome.commands.onCommand.addListener(function(command){
 function jishoMe(text){
   fetch(Jisho+encodeURIComponent(text)).then(function(response) {
     response.json().then(function(o){o.data.forEach(c=>{if(true||c.is_common){
+      //console.log(c);
       console.log(  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
       console.log(  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
       console.log(  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
