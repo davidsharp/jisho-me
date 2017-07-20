@@ -50,7 +50,8 @@ function jishoMe(text){
           type:'basic',
           message:d[0].message,
           iconUrl:'https://avatars2.githubusercontent.com/u/5731838?v=4&s=40',
-          title:d[0].title
+          title:d[0].title,
+          requireInteraction:true
         },
         ()=>{}
       )
