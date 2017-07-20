@@ -9,7 +9,11 @@ var throttle = 300
 
 
 function messageExtension(){
+  console.log(window.getSelection())
   if(window.getSelection().toString()!==selection)chrome.extension.sendMessage(window.getSelection().toString(), function(response) {
      //callback
   });
 }
+
+//window.getSelection().baseNode.parentElement.style.backgroundColor = "red"
+//window.getSelection().baseNode.parentElement.offsetHeight

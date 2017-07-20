@@ -30,12 +30,24 @@ chrome.commands.onCommand.addListener(function(command){
 
 function jishoMe(text){
   fetch(Jisho+encodeURIComponent(text)).then(function(response) {
-    response.json().then(function(o){o.data.forEach(c=>{if(true||c.is_common){
+    response.json().then(function(o){console.log(o)
+      var d = o.data.map(c=>{if(true||c.is_common){console.log(c)
       //console.log(c);
-      console.log(  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
-      console.log(  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
-      console.log(  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
-      console.log(  '~~~~~~~~~~~~~~~' )
-    }})})
+      //console.log
+      return (
+        (  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
+      //console.log
+      +'\n'+
+        (  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
+      //console.log
+      +'\n'+
+        (  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
+      //console.log
+      +'\n'+
+        (  '~~~~~~~~~~~~~~~' ))
+      }})
+      console.log(d)
+      chrome.notifications.create('jisho', {type:'basic',message:d.join('\n'),iconUrl:'https://avatars2.githubusercontent.com/u/5731838?v=4&s=40',title:'Jisho Me!'}, ()=>{})
+    })
   })
 }
