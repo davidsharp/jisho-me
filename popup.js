@@ -30,24 +30,30 @@ chrome.commands.onCommand.addListener(function(command){
 
 function jishoMe(text){
   fetch(Jisho+encodeURIComponent(text)).then(function(response) {
-    response.json().then(function(o){console.log(o)
-      var d = o.data.map(c=>{if(true||c.is_common){console.log(c)
-      //console.log(c);
-      //console.log
-      return (
-        (  c.japanese.map(_c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))).join(', ') )
-      //console.log
-      +'\n'+
-        (  ` • ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}` )
-      //console.log
-      +'\n'+
-        (  ` • Meaning: ${c.senses.map(_c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}` )
-      //console.log
-      +'\n'+
-        (  '~~~~~~~~~~~~~~~' ))
+    response.json().then(function(o){
+      var d = o.data.map(c=>{if(true||c.is_common){
+        return (
+          {
+            title: (c.japanese.map(
+              _c=>([_c.word,_c.reading].filter(f=>!!f).join(' – '))
+            ).join(', ')
+              + `• ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}`
+            ),
+            message:`${c.senses.map(
+              _c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}`
+          }
+        )
       }})
-      console.log(d)
-      chrome.notifications.create('jisho', {type:'basic',message:d.join('\n'),iconUrl:'https://avatars2.githubusercontent.com/u/5731838?v=4&s=40',title:'Jisho Me!'}, ()=>{})
+      chrome.notifications.create(
+        'jisho'+Date.now(),
+        {
+          type:'basic',
+          message:d[0].message,
+          iconUrl:'https://avatars2.githubusercontent.com/u/5731838?v=4&s=40',
+          title:d[0].title
+        },
+        ()=>{}
+      )
     })
   })
 }
