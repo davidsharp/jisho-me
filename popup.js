@@ -30,7 +30,7 @@ chrome.commands.onCommand.addListener(function(command){
 
 function jishoMe(text){
   fetch(Jisho+encodeURIComponent(text)).then(function(response) {
-    response.json().then(function(o){
+    response.json().then(function(o){//alert(JSON.stringify(o.data))
       var d = o.data.map(c=>{if(true||c.is_common){
         return (
           {
@@ -40,18 +40,27 @@ function jishoMe(text){
               + `• ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}`
             ),
             message:`${c.senses.map(
-              _c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}`
+              _c=>(_c.english_definitions).map(_c=>('"'+_c+'"')).join(', '))}`,
+            //contextMessage: (`• ${c.senses.map(_c=>_c.parts_of_speech).join(', ')}${!c.is_common?' (uncommon)':''}`)
           }
         )
       }})
+      var myID = 'jisho'+Date.now();
+      var openTab = (id,index)=>{
+        if(id===myID)chrome.tabs.create({url:`http://jisho.org/search/${text}`},()=>chrome.notifications.clear(myID))
+      }
+      chrome.notifications.onClicked.addListener(openTab)
+      chrome.notifications.onButtonClicked.addListener(openTab)
       chrome.notifications.create(
-        'jisho'+Date.now(),
+        myID,
         {
           type:'basic',
           message:d[0].message,
           iconUrl:'https://avatars2.githubusercontent.com/u/5731838?v=4&s=40',
           title:d[0].title,
-          requireInteraction:true
+          requireInteraction:true,
+          //contextMessage:d[0].contextMessage
+          buttons: [{title:'open search'}]
         },
         ()=>{}
       )
